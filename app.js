@@ -19,11 +19,21 @@
   function zetVoorkeur(k, v) { voorkeur[k] = v; const d = lees(); d.voorkeur = voorkeur; bewaar(d); }
 
   // ---------- schermen ----------
+  // Elk scherm buiten de straat krijgt één stap in de browsergeschiedenis, zodat de terugknop of terugveeg
+  // terug naar de straat gaat in plaats van de app te verlaten.
   function toon(id) {
     $$('.scherm').forEach((s) => { s.hidden = s.id !== id; });
     document.body.dataset.scherm = id; window.scrollTo(0, 0);
     if (id !== 'sGesprek') stopLus();
+    if (id !== 'sStraat' && !(history.state && history.state.sprich)) { try { history.pushState({ sprich: 1 }, ''); } catch (e) {} }
+    const kop = $(`#${id} h1`); if (kop) { kop.setAttribute('tabindex', '-1'); try { kop.focus({ preventScroll: true }); } catch (e) {} }
   }
+  function verlaatNaarStraat() {
+    stopStem(); stopOpname(true); G.klaar = true; G.sessie++; sluitMicrofoon();
+    renderStraat(); toon('sStraat');
+  }
+  function naarStraat() { if (history.state && history.state.sprich) history.back(); else verlaatNaarStraat(); }
+  addEventListener('popstate', () => { if (document.body.dataset.scherm !== 'sStraat') verlaatNaarStraat(); });
 
   // ---------- staat de AI aan? ----------
   let live = { gecheckt: false, ok: false };
@@ -67,15 +77,35 @@
     (live.ok ? Promise.resolve(true) : checkLive()).then((ok) => { if (ok) voorlaad(w.opener.de, w.id, w.opener.emotie); });
   }
   function renderFocus() { $('#brFocus').hidden = !keuze.focus; $('#brFocusTekst').textContent = keuze.focus; }
-  function renderTempo() { $$('.seg [data-tempo]').forEach((b) => b.classList.toggle('on', (b.dataset.tempo === 'langzaam') === voorkeur.langzaam)); }
+  function renderTempo() { $$('.seg [data-tempo]').forEach((b) => { const aan = (b.dataset.tempo === 'langzaam') === voorkeur.langzaam; b.classList.toggle('on', aan); b.setAttribute('aria-pressed', String(aan)); }); }
   $$('.seg [data-tempo]').forEach((b) => b.addEventListener('click', () => { zetVoorkeur('langzaam', b.dataset.tempo === 'langzaam'); renderTempo(); const w = vind(keuze.id); if (w && live.ok) voorlaad(w.opener.de, w.id, w.opener.emotie); }));
   $('#brFocusWeg').addEventListener('click', () => { keuze.focus = ''; renderFocus(); });
-  $('#brTerug').addEventListener('click', () => { renderStraat(); toon('sStraat'); });
+  $('#brTerug').addEventListener('click', naarStraat);
   $('#brStart').addEventListener('click', async () => {
     ontgrendelAudio();
-    if (!live.ok && !(await checkLive())) { toast('De AI staat nog niet aan. Vraag je docent om de sleutel in Vercel te zetten.', 6000); return; }
+    if (!live.ok && !(await checkLive())) { toast('De AI staat nog niet aan. Vraag je docent om de app aan te zetten.', 6000); return; }
+    vraagMic().catch(() => {}); // de toestemming nu al vragen, dan gaat de eerste zin niet verloren
     startGesprek(keuze.id, keuze.focus);
   });
+
+  // ---------- de microfoon ----------
+  function vraagMic() {
+    if (G.stream && G.stream.active) return Promise.resolve(G.stream);
+    if (!G.micBelofte) {
+      try {
+        G.micBelofte = navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } })
+          .then((s) => {
+            if (document.body.dataset.scherm !== 'sGesprek' || G.klaar) { s.getTracks().forEach((t) => t.stop()); throw new Error('niet meer nodig'); }
+            G.stream = s; return s;
+          })
+          .finally(() => { G.micBelofte = null; });
+      } catch (e) { return Promise.reject(e); }
+    }
+    return G.micBelofte;
+  }
+  function sluitMicrofoon() {
+    if (G.stream) { try { G.stream.getTracks().forEach((t) => t.stop()); } catch (e) {} G.stream = null; }
+  }
 
   // ---------- de stem ----------
   const audio = $('#stemAudio');
@@ -98,17 +128,18 @@
     analyser.getByteTimeDomainData(buf); let s = 0; for (let i = 0; i < buf.length; i++) { const v = (buf[i] - 128) / 128; s += v * v; }
     return klem(Math.sqrt(s / buf.length) * 5.5, 0, 1);
   }
-  const Stem = { api: null, cache: new Map() };
+  // Na twee mislukte stemmen op rij gebruikt de app de browserstem, tot het volgende gesprek.
+  const Stem = { api: null, fouten: 0, cache: new Map() };
   function haalStem(tekst, wie, emotie, langzaam) {
     const sleutel = `${wie}|${emotie}|${langzaam ? 1 : 0}|${tekst}`;
     if (Stem.cache.has(sleutel)) return Stem.cache.get(sleutel);
     const p = fetch('api/stem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tekst, wie, emotie, langzaam: !!langzaam }) })
       .then((r) => { if (!r.ok) throw new Error('stem ' + r.status); return r.blob(); })
-      .then((b) => { if (!b.size) throw new Error('lege stem'); Stem.api = true; return URL.createObjectURL(b); })
-      .catch((e) => { Stem.cache.delete(sleutel); throw e; });
+      .then((b) => { if (!b.size) throw new Error('lege stem'); Stem.api = true; Stem.fouten = 0; return URL.createObjectURL(b); })
+      .catch((e) => { Stem.cache.delete(sleutel); Stem.fouten += 1; if (Stem.fouten >= 2) Stem.api = false; throw e; });
     Stem.cache.set(sleutel, p); return p;
   }
-  function voorlaad(tekst, wie, emotie) { if (live.ok) haalStem(tekst, wie, emotie, voorkeur.langzaam).catch(() => {}); }
+  function voorlaad(tekst, wie, emotie) { if (live.ok && Stem.api !== false) haalStem(tekst, wie, emotie, voorkeur.langzaam).catch(() => {}); }
   function browserStem(tekst, wie, langzaam) {
     return new Promise((klaar) => {
       if (!('speechSynthesis' in window)) return klaar();
@@ -168,10 +199,13 @@
   function zetKnopjes() { $('#gLangzaam').setAttribute('aria-pressed', String(voorkeur.langzaam)); $('#gVertaal').setAttribute('aria-pressed', String(voorkeur.vertaling)); }
 
   // ---------- het gesprek ----------
-  const G = { w: null, geschiedenis: [], notities: [], gedaan: new Set(), bezig: false, klaar: false, focus: '', laatste: null, hulp: [], gesproken: 0, getypt: 0, stream: null, opener: null };
+  // G.sessie telt elk gesprek. Een antwoord dat binnenkomt voor een gesprek dat al voorbij is, wordt genegeerd.
+  const G = { w: null, sessie: 0, geschiedenis: [], notities: [], gedaan: new Set(), bezig: false, klaar: false, focus: '', laatste: null, hulp: [], gesproken: 0, getypt: 0, stream: null, micBelofte: null };
   function startGesprek(id, focus) {
     const w = vind(id);
     stopStem(); stopOpname(true);
+    G.sessie += 1; const sessie = G.sessie;
+    if (Stem.api === false) { Stem.api = null; Stem.fouten = 0; }
     Object.assign(G, { w, geschiedenis: [], notities: [], gedaan: new Set(), bezig: false, klaar: false, focus: focus || '', laatste: null, hulp: w.startHulp.slice(), gesproken: 0, getypt: 0 });
     $('#portret').innerHTML = T.portret(id); F.reset(); kader();
     $('#gWinkel').textContent = w.naam; $('#gWie').textContent = `${w.persoon} · ${w.rol}`;
@@ -183,12 +217,15 @@
     $('#gNoot').textContent = w.info.noot || ''; $('#gNoot').hidden = !w.info.noot;
     $('#gInfoBlok').open = id === 'lena' && innerWidth > 860;
     $('#gBediening').hidden = false; $('#gEinde').hidden = true;
-    zetTyp(false); zetKnopjes(); zetOndertitel(null); zetMic('wacht');
+    zetTyp(false); zetKnopjes(); zetMic('wacht');
+    G.laatste = { de: w.opener.de, nl: w.opener.nl, emotie: w.opener.emotie };
+    zetOndertitel(G.laatste); $('#gNogeens').disabled = false;
     toon('sGesprek'); startLus();
     (async () => {
       await wacht(450);
-      G.laatste = { de: w.opener.de, nl: w.opener.nl, emotie: w.opener.emotie };
-      await spreek(G.laatste); naSpreken();
+      if (sessie !== G.sessie || G.klaar || opname) return; // al weg, of de leerling praat al
+      await spreek(G.laatste);
+      if (sessie === G.sessie) naSpreken();
     })();
   }
   // het portret zo uitsnijden dat het hoofd altijd in beeld is, hoe breed of laag het vak ook is
@@ -196,7 +233,10 @@
     const vak = $('#portret'), svg = vak && vak.querySelector('svg'); if (!svg) return;
     const w = vak.clientWidth, h = vak.clientHeight; if (!w || !h) return;
     const s = Math.max(w / 900, h / 760, Math.min(w / 560, h / 420)), vw = w / s, vh = h / s;
-    const x = klem(470 - vw / 2, 0, 900 - vw), y = klem(292 - vh / 2, 0, 760 - vh);
+    const x = klem(470 - vw / 2, 0, 900 - vw);
+    let y = klem(292 - vh / 2, 0, 760 - vh);
+    if (y + vh < 462) y = klem(462 - vh, 0, 760 - vh); // in een laag vak gaan mond en kin voor, het haar mag eraf
+    if (y > 250) y = klem(250, 0, 760 - vh); // de ogen blijven altijd in beeld
     svg.setAttribute('viewBox', `${x.toFixed(1)} ${y.toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
     svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
   }
@@ -235,17 +275,22 @@
   async function startOpname() {
     if (!G.w || G.bezig || G.klaar || opname) return;
     stopStem();
-    const o = { chunks: [], tekst: '', klaar: null, start: performance.now() };
-    opname = o; zetMic('op');
+    const o = { chunks: [], tekst: '', klaar: null, start: 0 };
+    opname = o;
+    const klaarVoorOpname = G.stream && G.stream.active;
+    if (!klaarVoorOpname) { $('#gCaption').classList.remove('live'); $('#gCaption').textContent = 'Sta de microfoon toe als je browser erom vraagt.'; }
     try {
-      if (!G.stream || !G.stream.active) G.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
-      if (opname !== o) return;
+      await vraagMic();
+      if (opname !== o) return; // al losgelaten terwijl de browser om toestemming vroeg
       o.rec = new MediaRecorder(G.stream); o.rec.ondataavailable = (e) => e.data && e.data.size && o.chunks.push(e.data);
-      o.klaar = new Promise((r) => { o.rec.onstop = r; }); o.rec.start();
+      o.klaar = new Promise((r) => { o.rec.onstop = r; }); o.rec.start(); o.start = performance.now();
     } catch (e) {
+      if (opname !== o) return;
       opname = null; zetMic('klaar'); zetTyp(true);
-      toast('De microfoon doet het niet (geen toestemming of niet beschikbaar). Je kunt typen.', 6000); return;
+      $('#gCaption').textContent = 'De microfoon doet het niet. Typ je zin in het veld hieronder.';
+      toast('De microfoon doet het niet (geen toestemming of niet beschikbaar). Je kunt typen.', 7000); return;
     }
+    zetMic('op');
     if (SR) {
       try {
         const sr = new SR(); sr.lang = 'de-DE'; sr.interimResults = true; sr.continuous = true;
@@ -258,7 +303,13 @@
     const o = opname; if (!o) return; opname = null;
     try { o.sr && o.sr.stop(); } catch (e) {}
     try { if (o.rec && o.rec.state !== 'inactive') o.rec.stop(); } catch (e) {}
-    if (afbreken || !o.rec) { if (!G.bezig && !G.klaar && G.w) zetMic('klaar'); return; }
+    if (afbreken || !o.rec) {
+      if (!G.bezig && !G.klaar && G.w) {
+        zetMic('klaar');
+        if (!afbreken) $('#gCaption').textContent = G.stream && G.stream.active ? 'Houd de knop vast zolang je praat.' : 'Sta eerst de microfoon toe. Houd daarna de knop vast en praat.';
+      }
+      return;
+    }
     const duur = performance.now() - o.start;
     await o.klaar; await wacht(120);
     let audioB64 = null;
@@ -284,15 +335,20 @@
 
   async function stuurBeurt({ audio: audioB64, tekst }) {
     if (G.bezig || G.klaar) return;
+    const sessie = G.sessie, weg = () => sessie !== G.sessie || G.klaar;
     G.bezig = true; zetMic('denkt'); F.zetEmotie('nadenkend');
     const denkt = $('#portret').appendChild(Object.assign(document.createElement('div'), { className: 'denkt', innerHTML: '<i></i><i></i><i></i>' }));
     $('#gJij').hidden = false; $('#gJijTekst').textContent = tekst || '…';
     try {
-      const r = await fetch('api/gesprek', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-        mode: 'beurt', winkel: G.w.id, geschiedenis: G.geschiedenis, gedaan: [...G.gedaan], focus: G.focus,
-        beurt: G.geschiedenis.filter((b) => b.wie === 'leerling').length, audio: audioB64, tekst }) });
+      let r;
+      try {
+        r = await fetch('api/gesprek', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+          mode: 'beurt', winkel: G.w.id, geschiedenis: G.geschiedenis, gedaan: [...G.gedaan], focus: G.focus,
+          beurt: G.geschiedenis.filter((b) => b.wie === 'leerling').length, audio: audioB64, tekst }) });
+      } catch (x) { throw new Error('Er is geen verbinding met internet.'); }
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(j.fout === 'geen-sleutel' ? 'de AI-sleutel ontbreekt.' : (j.fout || 'er kwam geen antwoord.'));
+      if (weg()) { denkt.remove(); if (sessie === G.sessie) G.bezig = false; return; }
+      if (!r.ok) throw new Error(foutTekst(r.status, j.fout));
       if (audioB64) G.gesproken++; else G.getypt++;
       const zin = j.leerling_tekst || tekst || '';
       $('#gJijTekst').textContent = zin;
@@ -305,16 +361,27 @@
       G.laatste = { de: j.tekst, nl: j.vertaling, emotie: j.emotie };
       G.bezig = false; zetMic('wacht');
       await spreek(G.laatste);
+      if (weg()) return;
       if (j.einde || G.gedaan.size === G.w.opdrachten.length && /tsch[üu]ss|wiedersehen|sch[öo]nen tag/i.test(j.tekst)) return eindeGesprek();
       naSpreken();
     } catch (e) {
-      denkt.remove(); F.zetEmotie('neutraal'); G.bezig = false; zetMic('klaar');
-      $('#gCaption').textContent = 'Dat lukte niet. Probeer het nog eens.';
-      toast('Dat lukte niet: ' + e.message + ' Probeer het nog eens.', 6000);
+      denkt.remove();
+      if (weg()) { if (sessie === G.sessie) G.bezig = false; return; }
+      F.zetEmotie('neutraal'); G.bezig = false; zetMic('klaar');
+      if (!audioB64 && tekst) { zetTyp(true); if (!$('#gInput').value) $('#gInput').value = tekst; }
+      $('#gCaption').textContent = `${e.message} Probeer het nog eens.`;
+      toast(`${e.message} Probeer het nog eens.`, 7000);
     }
   }
+  // een foutmelding die een leerling begrijpt
+  function foutTekst(status, fout) {
+    if (fout === 'geen-sleutel') return 'De AI staat uit. Vraag je docent om de app aan te zetten.';
+    if (status === 429) return 'De AI is even te druk.';
+    if (typeof fout === 'string' && fout && fout.length < 140 && !/[{}<>]/.test(fout)) return fout;
+    return 'De AI gaf geen antwoord.';
+  }
   function eindeGesprek() {
-    G.klaar = true; stopOpname(true);
+    G.klaar = true; stopOpname(true); sluitMicrofoon();
     const n = G.gedaan.size, tot = G.w.opdrachten.length;
     $('#gEindeTekst').textContent = n === tot ? `Het gesprek is klaar. Je deed alle ${tot} opdrachten!` : `Het gesprek is klaar. Je deed ${n} van de ${tot} opdrachten.`;
     $('#gBediening').hidden = true; $('#gEinde').hidden = false; zetHulp(false);
@@ -325,7 +392,7 @@
     if (G.bezig) { toast('Even wachten tot het antwoord er is.'); return; }
     maakFeedback();
   });
-  $('#gTerug').addEventListener('click', () => { stopStem(); stopOpname(true); G.klaar = true; renderStraat(); toon('sStraat'); });
+  $('#gTerug').addEventListener('click', naarStraat);
   $('#gTyp').addEventListener('submit', (e) => { e.preventDefault(); const t = $('#gInput').value.trim(); if (!t || G.bezig || G.klaar) return; $('#gInput').value = ''; ontgrendelAudio(); stopStem(); stuurBeurt({ audio: null, tekst: t }); });
   const mic = $('#gMic');
   mic.addEventListener('pointerdown', (e) => { if (e.button > 0) return; e.preventDefault(); ontgrendelAudio(); try { mic.setPointerCapture(e.pointerId); } catch (x) {} startOpname(); });
@@ -335,8 +402,8 @@
   // ---------- feedback ----------
   let laatsteFb = null;
   async function maakFeedback() {
-    stopStem(); stopOpname(true); G.klaar = true;
-    const w = G.w, n = G.gedaan.size, tot = w.opdrachten.length;
+    stopStem(); stopOpname(true); G.klaar = true; sluitMicrofoon();
+    const w = G.w, n = G.gedaan.size, tot = w.opdrachten.length, sessie = G.sessie;
     $('#fbMini').innerHTML = T.portret(w.id, true);
     $('#fbWinkel').textContent = `${w.naam} · ${w.persoon}`;
     $('#fbTitel').textContent = n === tot ? 'Super gemacht!' : n === 3 ? 'Gut gemacht!' : n === 2 ? 'Schon ganz gut!' : 'Ein guter Anfang!';
@@ -344,14 +411,20 @@
     $('#fbLaden').hidden = false; $('#fbInhoud').hidden = true; $('#fbFout').hidden = true;
     toon('sFeedback');
     try {
-      const r = await fetch('api/gesprek', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-        mode: 'feedback', winkel: w.id, geschiedenis: G.geschiedenis, notities: G.notities, gedaan: [...G.gedaan], focus: G.focus, gesproken: G.gesproken > 0 }) });
+      let r;
+      try {
+        r = await fetch('api/gesprek', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+          mode: 'feedback', winkel: w.id, geschiedenis: G.geschiedenis, notities: G.notities, gedaan: [...G.gedaan], focus: G.focus, gesproken: G.gesproken > 0 }) });
+      } catch (x) { throw new Error('Er is geen verbinding met internet.'); }
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(j.fout || 'Er kwam geen feedback.');
-      laatsteFb = j; renderFeedback(j);
+      if (!r.ok) throw new Error(foutTekst(r.status, j.fout));
+      // de poging telt mee, ook als de leerling intussen al verder is gegaan
       const d = lees(); const p = d[w.id] || { best: 0, keer: 0 };
       p.best = Math.max(p.best, n); p.keer += 1; p.focus = j.volgende_stap || ''; d[w.id] = p; bewaar(d);
+      if (sessie !== G.sessie || document.body.dataset.scherm !== 'sFeedback') return;
+      laatsteFb = j; renderFeedback(j);
     } catch (e) {
+      if (sessie !== G.sessie || document.body.dataset.scherm !== 'sFeedback') return;
       $('#fbLaden').hidden = true; $('#fbFout').hidden = false;
       $('#fbSamen').textContent = `Je deed ${n} van de ${tot} opdrachten. De feedback lukte niet: ${e.message}`;
     }
@@ -384,15 +457,15 @@
     $$('.luister.speelt').forEach((b) => b.classList.remove('speelt')); knop.classList.add('speelt');
     try { if (losAudio) losAudio.pause(); } catch (e) {}
     try {
-      if (!live.ok) throw new Error('geen live');
+      if (!live.ok || Stem.api === false) throw new Error('geen api-stem');
       const url = await haalStem(zin, G.w.id, 'vriendelijk', true);
       losAudio = new Audio(url); losAudio.onended = losAudio.onerror = () => knop.classList.remove('speelt');
       await losAudio.play();
     } catch (e) { await browserStem(zin, G.w.id, true); knop.classList.remove('speelt'); }
   }
   $('#fbOpnieuw').addEventListener('click', () => openBriefing(G.w.id, laatsteFb ? laatsteFb.volgende_stap : ''));
-  $('#fbStraat').addEventListener('click', () => { renderStraat(); toon('sStraat'); });
-  $('#fbFoutStraat').addEventListener('click', () => { renderStraat(); toon('sStraat'); });
+  $('#fbStraat').addEventListener('click', naarStraat);
+  $('#fbFoutStraat').addEventListener('click', naarStraat);
   $('#fbNogmaals').addEventListener('click', maakFeedback);
 
   // ---------- docentinformatie ----------
@@ -421,5 +494,5 @@
 
   // ---------- start ----------
   renderStraat(); checkLive();
-  window.__sprich = { G, live: () => live, zetLive: (v) => { live = { gecheckt: true, ok: v }; }, step: (n, d) => { for (let i = 0; i < n; i++) { klok += d || 1 / 60; F.teken(d || 1 / 60, spreekt, volume()); } }, openBriefing, startGesprek, stuurBeurt, maakFeedback, renderFeedback, eindeGesprek, Stem };
+  window.__sprich = { G, kader, live: () => live, zetLive: (v) => { live = { gecheckt: true, ok: v }; }, step: (n, d) => { for (let i = 0; i < n; i++) { klok += d || 1 / 60; F.teken(d || 1 / 60, spreekt, volume()); } }, openBriefing, startGesprek, stuurBeurt, maakFeedback, renderFeedback, eindeGesprek, Stem };
 })();

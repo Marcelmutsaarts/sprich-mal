@@ -41,4 +41,4 @@ Zet je de sleutel er pas na de eerste deploy in, kies dan in Vercel bij Deployme
 
 ## Privacy
 
-De opname en de tekst gaan via OpenRouter naar het taalmodel; de stem wordt door Microsoft gemaakt. De app bewaart geen gesprekken op een server. Laat leerlingen geen namen of persoonlijke gegevens noemen, en check of stemopnames passen binnen de privacyafspraken van de school.
+De opname en de tekst gaan via OpenRouter naar het taalmodel; de stem wordt door Microsoft gemaakt. De live ondertitel tijdens het praten komt van de spraakdienst van de browser (Google bij Chrome, Microsoft bij Edge, Apple bij Safari). De app bewaart geen gesprekken op een server. Laat leerlingen geen namen of persoonlijke gegevens noemen, en check of stemopnames passen binnen de privacyafspraken van de school.

@@ -12,8 +12,9 @@
 <style>
 :root{
   --paars:#a15df5;--paars-d:#7947ba;--paars-l:#ebdfff;--paars-ll:#f6f0ff;
-  --ink:#1d1530;--tekst:#4a5568;--zacht:#7d7590;--lijn:#e8e2f1;--bg:#faf8fd;
-  --goed:#119a77;--goed-l:#e3f5ee;--beter:#c27713;--beter-l:#fdf1df;
+  --knop:#8b4fd9;--knop-d:#7240b8;
+  --ink:#1d1530;--tekst:#4a5568;--zacht:#6b6480;--lijn:#e8e2f1;--bg:#faf8fd;
+  --goed:#119a77;--goed-tekst:#0e7f62;--goed-l:#e3f5ee;--beter:#c27713;--beter-l:#fdf1df;
   --r:16px;--sch:0 1px 2px rgba(29,21,48,.05),0 8px 24px rgba(29,21,48,.06);
 }
 *{box-sizing:border-box}
@@ -37,8 +38,9 @@ h1,h2,h3,p{margin:0}
 .eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--paars-d);margin-bottom:8px}
 h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing:-.015em}
 .lead{font-size:17px;color:var(--tekst);max-width:640px;margin-top:10px}
-.cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--paars);color:#fff;border:0;border-radius:12px;padding:14px 24px;font-weight:700;font-size:16px;box-shadow:0 6px 18px rgba(161,93,245,.28);transition:background .15s}
-.cta:hover{background:var(--paars-d)}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--knop);color:#fff;border:0;border-radius:12px;padding:14px 24px;font-weight:700;font-size:16px;box-shadow:0 6px 18px rgba(161,93,245,.28);transition:background .15s}
+.cta:hover{background:var(--knop-d)}
+h1:focus{outline:none}
 .cta.zacht{background:#fff;color:var(--paars-d);border:1.5px solid var(--paars);box-shadow:none}
 .cta.zacht:hover{background:var(--paars-ll)}
 .tekstknop{background:none;border:0;padding:6px 0;color:var(--paars-d);font-weight:700;font-size:14.5px}
@@ -54,7 +56,7 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
 .w-tekst b{font-size:17px;font-weight:800}
 .w-tekst span{color:var(--tekst);font-size:14.5px}
 .w-tekst small{margin-top:10px;font-size:12.5px;color:var(--zacht);font-weight:600;display:flex;align-items:center;gap:6px}
-.w-tekst small.gedaan{color:var(--goed)}
+.w-tekst small.gedaan{color:var(--goed-tekst)}
 .stappen{display:flex;gap:28px;flex-wrap:wrap;margin-top:34px;padding-top:22px;border-top:1px solid var(--lijn)}
 .stap{display:flex;gap:12px;align-items:flex-start;max-width:300px;font-size:14.5px;color:var(--tekst)}
 .stap i{flex:none;width:28px;height:28px;border-radius:50%;background:var(--paars-ll);color:var(--paars-d);display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13.5px}
@@ -136,7 +138,7 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
 .g-zij{min-height:0;overflow:auto;display:flex;flex-direction:column;gap:14px;padding-bottom:4px}
 .kaart{background:#fff;border:1px solid var(--lijn);border-radius:var(--r);padding:16px 18px}
 .kaart h3{display:flex;justify-content:space-between;align-items:baseline}
-.kaart h3 em{font-style:normal;color:var(--goed);letter-spacing:0;text-transform:none;font-size:13px}
+.kaart h3 em{font-style:normal;color:var(--goed-tekst);letter-spacing:0;text-transform:none;font-size:13px}
 .jij span{font-size:12px;font-weight:700;color:var(--zacht);text-transform:uppercase;letter-spacing:.09em}
 .jij p{font-size:16px;margin-top:4px}
 .hulpkaart{border-color:#d5c0f7}
@@ -146,12 +148,12 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
 .focuskaart p{font-size:14.5px}
 .g-onder{display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 24px 16px;background:#fff;border-top:1px solid var(--lijn);flex-wrap:wrap}
 .g-onder .midden{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;width:min(540px,100%)}
-.mic{display:inline-flex;align-items:center;gap:12px;background:var(--paars);color:#fff;border:0;border-radius:999px;padding:16px 30px;font-weight:700;font-size:17px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;box-shadow:0 6px 20px rgba(161,93,245,.35);transition:background .15s,box-shadow .2s}
+.mic{display:inline-flex;align-items:center;gap:12px;background:var(--knop);color:#fff;border:0;border-radius:999px;padding:16px 30px;font-weight:700;font-size:17px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;box-shadow:0 6px 20px rgba(161,93,245,.35);transition:background .15s,box-shadow .2s}
 .mic svg{width:22px;height:22px;flex:none}
-.mic:hover{background:var(--paars-d)}
-.mic.op{background:var(--paars-d);animation:ring 1.4s infinite}
+.mic:hover{background:var(--knop-d)}
+.mic.op{background:var(--knop-d);animation:ring 1.4s infinite}
 @keyframes ring{0%{box-shadow:0 0 0 0 rgba(161,93,245,.45)}70%{box-shadow:0 0 0 18px rgba(161,93,245,0)}100%{box-shadow:0 0 0 0 rgba(161,93,245,0)}}
-.mic.denkt,.mic:disabled{background:#cfc7dc;box-shadow:none;cursor:default}
+.mic.denkt,.mic:disabled{background:#ebe6f2;color:var(--tekst);box-shadow:none;cursor:default}
 .caption{font-size:13.5px;color:var(--zacht);text-align:center;max-width:560px;min-height:20px}
 .caption.live{color:var(--ink);font-weight:600}
 .zijknop{background:#fff;border:1px solid var(--lijn);border-radius:12px;padding:12px 16px;font-weight:700;font-size:14.5px;color:var(--tekst);display:inline-flex;align-items:center;gap:8px}
@@ -160,7 +162,7 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
 .zijknop[aria-pressed="true"]{background:var(--paars-l);border-color:transparent;color:var(--paars-d)}
 .typ{display:flex;gap:8px;width:min(520px,100%)}
 .typ input{flex:1;min-width:0;border:1px solid var(--lijn);border-radius:10px;padding:10px 12px;font:inherit;font-size:15px}
-.typ button{border:0;background:var(--paars);color:#fff;border-radius:10px;padding:10px 16px;font-weight:700}
+.typ button{border:0;background:var(--knop);color:#fff;border-radius:10px;padding:10px 16px;font-weight:700}
 .einde{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
 .einde p{font-size:15px;color:var(--tekst)}
 
@@ -321,7 +323,7 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
         <div class="br-start">
           <button class="cta" id="brStart">Ga naar binnen</button>
           <div class="tempo">Spreektempo
-            <div class="seg" role="group" aria-label="Spreektempo"><button data-tempo="normaal">Normaal</button><button data-tempo="langzaam">Langzaam</button></div>
+            <div class="seg" role="group" aria-label="Spreektempo"><button data-tempo="normaal" aria-pressed="true">Normaal</button><button data-tempo="langzaam" aria-pressed="false">Langzaam</button></div>
           </div>
         </div>
         <p class="micnoot">Je browser vraagt straks of de app je microfoon mag gebruiken. Kies Toestaan. Lukt praten niet, dan kun je ook typen.</p>
@@ -341,7 +343,7 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
         <div class="portret" id="portret"></div>
         <div class="ondertitel" id="gOndertitel">
           <div class="wie" id="gSpreker"></div>
-          <p class="de" id="gDe"></p>
+          <p class="de" id="gDe" lang="de" aria-live="polite"></p>
           <p class="nl" id="gNl" hidden></p>
           <div class="o-knoppen">
             <button class="pil" id="gNogeens" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Nog eens</button>
@@ -354,7 +356,7 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
         <div class="kaart focuskaart" id="gFocus" hidden><h3>Jouw focus</h3><p id="gFocusTekst"></p></div>
         <div class="kaart"><h3>Je opdrachten <em id="gTelling"></em></h3><ol class="taken" id="gTaken"></ol></div>
         <div class="kaart hulpkaart" id="gHulp" hidden><h3>Dit kun je zeggen</h3><ul class="zinnen" id="gHulpLijst"></ul></div>
-        <div class="kaart jij" id="gJij" hidden><span>Jij zei</span><p id="gJijTekst"></p></div>
+        <div class="kaart jij" id="gJij" hidden><span>Jij zei</span><p id="gJijTekst" lang="de"></p></div>
         <details class="kaart blok" id="gInfoBlok"><summary id="gInfoTitel"></summary><div class="info-lijst" id="gInfo"></div><p class="noot" id="gNoot"></p></details>
       </aside>
     </div>
@@ -362,7 +364,7 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
       <button class="zijknop" id="gHulpKnop" aria-pressed="false" aria-label="Hulp: zinnen die je nu kunt zeggen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg><span class="lbl">Hulp</span></button>
       <div class="midden">
         <button class="mic" id="gMic" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span id="gMicTekst">Even luisteren…</span></button>
-        <p class="caption" id="gCaption"></p>
+        <p class="caption" id="gCaption" aria-live="polite"></p>
         <form class="typ" id="gTyp" hidden><input id="gInput" placeholder="Typ in het Duits…" autocomplete="off" lang="de"><button>Stuur</button></form>
       </div>
       <button class="zijknop" id="gTypKnop" aria-pressed="false" aria-label="Typen in plaats van praten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg><span class="lbl">Typen</span></button>
@@ -379,7 +381,7 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
         <div class="mini" id="fbMini"></div>
         <div>
           <p class="eyebrow" id="fbWinkel"></p>
-          <h1 id="fbTitel"></h1>
+          <h1 id="fbTitel" lang="de"></h1>
           <p class="samen" id="fbSamen"></p>
         </div>
       </div>
@@ -434,7 +436,7 @@ h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing
     <h3>Eerlijk over AI</h3>
     <p>De feedback is een hulpmiddel, geen cijfer. De AI kan zich vergissen, vooral bij uitspraak: dat oordeel is een indicatie. Jouw eigen oordeel als docent blijft leidend.</p>
     <h3>Privacy</h3>
-    <p>De opname en de tekst gaan via OpenRouter naar een taalmodel van Google (Gemini). De stem wordt gemaakt door Microsoft (MAI-Voice). De app bewaart geen gesprekken op een server; de voortgang staat alleen in de browser van de leerling. Laat leerlingen geen namen of persoonlijke gegevens noemen, en check of het gebruik van stemopnames past binnen de privacyafspraken van je school.</p>
+    <p>De opname en de tekst gaan via OpenRouter naar een taalmodel van Google (Gemini). De stem wordt gemaakt door Microsoft (MAI-Voice). Tijdens het praten maakt de browser ook een live ondertitel; daarvoor stuurt de browser de stem naar zijn eigen spraakdienst (Google bij Chrome, Microsoft bij Edge, Apple bij Safari). De app bewaart geen gesprekken op een server; de voortgang staat alleen in de browser van de leerling. Laat leerlingen geen namen of persoonlijke gegevens noemen, en check of het gebruik van stemopnames past binnen de privacyafspraken van je school.</p>
     <p class="klein">Gemaakt door AI voor Docenten · aivoordocenten.nl</p>
   </div>
 </div>
