@@ -1,0 +1,6 @@
+{
+  "name": "sprich-mal",
+  "private": true,
+  "type": "module",
+  "description": "Sprich mal! Spreekoefening Duits voor 3 havo met een AI-verkoper in vier winkels, en feedback achteraf."
+}

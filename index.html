@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sprich mal! · Duits spreken in de winkelstraat</title>
+<meta name="description" content="Spreekoefening Duits voor 3 havo: praat in vier winkels met een Duitse verkoper en krijg daarna feedback om verder te leren.">
+<link rel="icon" type="image/png" href="assets/logo-avd.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paars:#a15df5;--paars-d:#7947ba;--paars-l:#ebdfff;--paars-ll:#f6f0ff;
+  --ink:#1d1530;--tekst:#4a5568;--zacht:#7d7590;--lijn:#e8e2f1;--bg:#faf8fd;
+  --goed:#119a77;--goed-l:#e3f5ee;--beter:#c27713;--beter-l:#fdf1df;
+  --r:16px;--sch:0 1px 2px rgba(29,21,48,.05),0 8px 24px rgba(29,21,48,.06);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--paars);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+
+/* kop */
+.kop{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:14px;padding:10px 24px;background:#fff;border-bottom:1px solid var(--lijn);height:62px}
+.logo{display:block;flex:none}
+.logo img{height:34px;width:auto;display:block}
+.kop-titel{display:flex;flex-direction:column;line-height:1.15;padding-left:14px;border-left:1px solid var(--lijn);min-width:0}
+.kop-titel b{font-size:17px;font-weight:800;letter-spacing:-.01em}
+.kop-titel span{font-size:12.5px;color:var(--zacht);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kop-knop{margin-left:auto;flex:none;background:#fff;border:1px solid var(--lijn);border-radius:999px;padding:8px 14px;color:var(--tekst);font-weight:600;font-size:13.5px}
+.kop-knop:hover{border-color:var(--paars);color:var(--paars-d)}
+
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--paars-d);margin-bottom:8px}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.1;font-weight:800;letter-spacing:-.015em}
+.lead{font-size:17px;color:var(--tekst);max-width:640px;margin-top:10px}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--paars);color:#fff;border:0;border-radius:12px;padding:14px 24px;font-weight:700;font-size:16px;box-shadow:0 6px 18px rgba(161,93,245,.28);transition:background .15s}
+.cta:hover{background:var(--paars-d)}
+.cta.zacht{background:#fff;color:var(--paars-d);border:1.5px solid var(--paars);box-shadow:none}
+.cta.zacht:hover{background:var(--paars-ll)}
+.tekstknop{background:none;border:0;padding:6px 0;color:var(--paars-d);font-weight:700;font-size:14.5px}
+.tekstknop:hover{text-decoration:underline}
+
+/* straat */
+.straat-wrap{max-width:1180px;margin:0 auto;padding:40px 24px 48px}
+.straat{margin-top:30px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.winkel{display:flex;flex-direction:column;text-align:left;background:#fff;border:1px solid var(--lijn);border-radius:18px;padding:0;overflow:hidden;box-shadow:var(--sch);transition:transform .2s,box-shadow .2s,border-color .2s}
+.winkel:hover{transform:translateY(-4px);border-color:#d8c8f3;box-shadow:0 2px 4px rgba(29,21,48,.06),0 18px 36px rgba(29,21,48,.11)}
+.gevel{display:block;width:100%;height:auto;background:linear-gradient(#e9f1f8,#f6f3ee 85%)}
+.w-tekst{padding:14px 16px 16px;display:flex;flex-direction:column;gap:2px}
+.w-tekst b{font-size:17px;font-weight:800}
+.w-tekst span{color:var(--tekst);font-size:14.5px}
+.w-tekst small{margin-top:10px;font-size:12.5px;color:var(--zacht);font-weight:600;display:flex;align-items:center;gap:6px}
+.w-tekst small.gedaan{color:var(--goed)}
+.stappen{display:flex;gap:28px;flex-wrap:wrap;margin-top:34px;padding-top:22px;border-top:1px solid var(--lijn)}
+.stap{display:flex;gap:12px;align-items:flex-start;max-width:300px;font-size:14.5px;color:var(--tekst)}
+.stap i{flex:none;width:28px;height:28px;border-radius:50%;background:var(--paars-ll);color:var(--paars-d);display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13.5px}
+.stap b{color:var(--ink);display:block}
+.status{margin-top:20px;padding:12px 16px;border-radius:12px;background:var(--beter-l);color:#7a4a0c;font-size:14.5px;font-weight:600;max-width:720px}
+.voet{margin-top:30px;font-size:13px;color:var(--zacht)}
+.voet a{color:var(--paars-d)}
+
+/* briefing */
+.br{max-width:1100px;margin:0 auto;padding:24px 24px 60px;display:grid;grid-template-columns:330px minmax(0,1fr);gap:36px;align-items:start}
+.br-beeld{position:sticky;top:86px}
+.br-beeld .gevel{border-radius:18px;border:1px solid var(--lijn)}
+.br-wie{margin-top:14px;display:flex;align-items:center;gap:12px}
+.br-wie .mini{width:56px;height:56px;border-radius:50%;overflow:hidden;flex:none;border:1px solid var(--lijn);background:#eee}
+.br-wie .mini svg{width:100%;height:100%;display:block}
+.br-wie b{display:block;font-size:16px}
+.br-wie span{font-size:14px;color:var(--zacht)}
+.blok{background:#fff;border:1px solid var(--lijn);border-radius:var(--r);padding:18px 20px;margin-top:14px}
+.blok h3,.kaart h3,.blok summary{font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--zacht);font-weight:700;margin-bottom:12px}
+.blok summary{cursor:pointer;margin:0;list-style:none;display:flex;align-items:center;justify-content:space-between}
+.blok summary::-webkit-details-marker{display:none}
+.blok summary::after{content:'';width:9px;height:9px;border-right:2px solid var(--zacht);border-bottom:2px solid var(--zacht);transform:rotate(45deg);margin:-4px 4px 0 0;transition:transform .2s}
+.blok details[open] summary::after,.blok[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+.blok[open] summary{margin-bottom:12px}
+.situatie{font-size:16.5px;color:var(--ink)}
+.taken{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.taken li{display:flex;gap:12px;align-items:center;font-size:15.5px;line-height:1.3}
+.taken .nr{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--paars-ll);color:var(--paars-d);font-weight:800;font-size:13.5px;transition:background .3s,color .3s,transform .3s}
+.taken li.klaar .nr{background:var(--goed);color:#fff}
+.taken li.klaar>span:last-child{color:var(--tekst)}
+.taken li.net .nr{animation:plop .6s ease}
+@keyframes plop{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+.taken svg{width:15px;height:15px}
+.info-lijst{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 24px}
+.info-lijst div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--lijn);padding:6px 0;font-size:14.5px}
+.info-lijst b{font-weight:700}
+.info-lijst span{color:var(--tekst);text-align:right}
+.noot{margin-top:10px;font-size:13.5px;color:var(--zacht)}
+.zinnen{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.zinnen li{display:flex;flex-direction:column;padding:8px 12px;border-radius:10px;background:var(--paars-ll)}
+.zinnen b{font-weight:700;font-size:15.5px}
+.zinnen span{font-size:13.5px;color:var(--tekst)}
+.br-start{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:8px;position:sticky;bottom:0;z-index:5;padding:16px 0 18px;background:linear-gradient(rgba(250,248,253,0),var(--bg) 22%)}
+.tempo{display:inline-flex;align-items:center;gap:10px;font-size:14px;color:var(--tekst)}
+.seg{display:inline-flex;border:1px solid var(--lijn);border-radius:999px;padding:3px;background:#fff}
+.seg button{border:0;background:none;padding:7px 14px;border-radius:999px;font-weight:600;font-size:14px;color:var(--tekst)}
+.seg button.on{background:var(--paars-l);color:var(--paars-d)}
+.focusblok{border-color:#d5c0f7;background:var(--paars-ll)}
+.focusblok h3{color:var(--paars-d)}
+.focusblok p{font-size:15.5px}
+.focusblok .tekstknop{margin-top:6px;font-size:13.5px}
+.micnoot{font-size:13.5px;color:var(--zacht);margin-top:14px}
+
+/* gesprek */
+#sGesprek{height:calc(100dvh - 62px);display:flex;flex-direction:column}
+.g-boven{display:flex;align-items:center;gap:14px;padding:10px 24px;background:#fff;border-bottom:1px solid var(--lijn)}
+.g-boven .plek{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.g-boven .plek b{font-size:15.5px}
+.g-boven .plek span{font-size:13px;color:var(--zacht)}
+.g-boven .rechts{margin-left:auto;display:flex;gap:8px}
+.g-raster{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,1fr);gap:18px;padding:16px 24px;width:100%;max-width:1360px;margin:0 auto}
+.g-podium{display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid var(--lijn);border-radius:20px;overflow:hidden;box-shadow:var(--sch)}
+.portret{flex:1;min-height:200px;position:relative;background:#efe7da}
+.portret>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.denkt{position:absolute;top:18px;right:18px;display:flex;gap:6px;align-items:center;background:#fff;border-radius:999px;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.12);font-size:13.5px;font-weight:600;color:var(--tekst)}
+.denkt i{width:7px;height:7px;border-radius:50%;background:var(--paars);animation:stip 1.2s infinite}
+.denkt i:nth-child(2){animation-delay:.15s}.denkt i:nth-child(3){animation-delay:.3s}
+@keyframes stip{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.ondertitel{padding:14px 20px 14px;border-top:1px solid var(--lijn);min-height:118px}
+.ondertitel .wie{font-size:12px;font-weight:700;color:var(--zacht);text-transform:uppercase;letter-spacing:.09em}
+.ondertitel .de{font-size:clamp(18px,1.9vw,23px);font-weight:700;margin-top:3px;line-height:1.3}
+.ondertitel .nl{font-size:15px;color:var(--tekst);margin-top:4px;font-style:italic}
+.o-knoppen{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pil{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--lijn);background:#fff;border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:600;color:var(--tekst)}
+.pil:hover{border-color:var(--paars)}
+.pil[aria-pressed="true"]{background:var(--paars-l);border-color:transparent;color:var(--paars-d)}
+.pil svg{width:16px;height:16px;flex:none}
+.pil:disabled{opacity:.45;cursor:default}
+.g-zij{min-height:0;overflow:auto;display:flex;flex-direction:column;gap:14px;padding-bottom:4px}
+.kaart{background:#fff;border:1px solid var(--lijn);border-radius:var(--r);padding:16px 18px}
+.kaart h3{display:flex;justify-content:space-between;align-items:baseline}
+.kaart h3 em{font-style:normal;color:var(--goed);letter-spacing:0;text-transform:none;font-size:13px}
+.jij span{font-size:12px;font-weight:700;color:var(--zacht);text-transform:uppercase;letter-spacing:.09em}
+.jij p{font-size:16px;margin-top:4px}
+.hulpkaart{border-color:#d5c0f7}
+.hulpkaart h3{color:var(--paars-d)}
+.focuskaart{background:var(--paars-ll);border-color:#d5c0f7}
+.focuskaart h3{color:var(--paars-d);margin-bottom:6px}
+.focuskaart p{font-size:14.5px}
+.g-onder{display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 24px 16px;background:#fff;border-top:1px solid var(--lijn);flex-wrap:wrap}
+.g-onder .midden{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;width:min(540px,100%)}
+.mic{display:inline-flex;align-items:center;gap:12px;background:var(--paars);color:#fff;border:0;border-radius:999px;padding:16px 30px;font-weight:700;font-size:17px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;box-shadow:0 6px 20px rgba(161,93,245,.35);transition:background .15s,box-shadow .2s}
+.mic svg{width:22px;height:22px;flex:none}
+.mic:hover{background:var(--paars-d)}
+.mic.op{background:var(--paars-d);animation:ring 1.4s infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(161,93,245,.45)}70%{box-shadow:0 0 0 18px rgba(161,93,245,0)}100%{box-shadow:0 0 0 0 rgba(161,93,245,0)}}
+.mic.denkt,.mic:disabled{background:#cfc7dc;box-shadow:none;cursor:default}
+.caption{font-size:13.5px;color:var(--zacht);text-align:center;max-width:560px;min-height:20px}
+.caption.live{color:var(--ink);font-weight:600}
+.zijknop{background:#fff;border:1px solid var(--lijn);border-radius:12px;padding:12px 16px;font-weight:700;font-size:14.5px;color:var(--tekst);display:inline-flex;align-items:center;gap:8px}
+.zijknop svg{width:18px;height:18px}
+.zijknop:hover{border-color:var(--paars);color:var(--paars-d)}
+.zijknop[aria-pressed="true"]{background:var(--paars-l);border-color:transparent;color:var(--paars-d)}
+.typ{display:flex;gap:8px;width:min(520px,100%)}
+.typ input{flex:1;min-width:0;border:1px solid var(--lijn);border-radius:10px;padding:10px 12px;font:inherit;font-size:15px}
+.typ button{border:0;background:var(--paars);color:#fff;border-radius:10px;padding:10px 16px;font-weight:700}
+.einde{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.einde p{font-size:15px;color:var(--tekst)}
+
+/* feedback */
+.fb{max-width:1100px;margin:0 auto;padding:32px 24px 64px}
+.fb-kop{display:flex;gap:22px;align-items:center}
+.fb-kop .mini{width:84px;height:84px;border-radius:50%;overflow:hidden;flex:none;border:1px solid var(--lijn);background:#eee}
+.fb-kop .mini svg{width:100%;height:100%;display:block}
+.fb-kop p.samen{font-size:16.5px;color:var(--tekst);margin-top:8px;max-width:720px}
+.fb-raster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:26px}
+.fb-raster .breed{grid-column:1/-1}
+.kaart.goedkaart{border-top:4px solid var(--goed)}
+.kaart.beterkaart{border-top:4px solid var(--beter)}
+.kaart.stapkaart{border:1.5px solid var(--paars);background:var(--paars-ll)}
+.kaart.stapkaart h3{color:var(--paars-d)}
+.lijst{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15.5px}
+.verb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--lijn)}
+.verb:first-of-type{padding-top:2px}
+.verb:last-child{border-bottom:0;padding-bottom:0}
+.verb small{display:block;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--zacht);margin-bottom:2px}
+.verb .jij{color:var(--tekst);font-size:15.5px}
+.verb .beter{font-weight:700;font-size:16px;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.verb .uitleg{grid-column:1/-1;font-size:14.5px;color:var(--tekst);background:var(--beter-l);border-radius:10px;padding:8px 12px}
+.luister{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--lijn);background:#fff;display:grid;place-items:center;color:var(--paars-d)}
+.luister:hover{border-color:var(--paars)}
+.luister.speelt{background:var(--paars-l);border-color:transparent}
+.luister svg{width:16px;height:16px}
+.woorden{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.woorden li{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed var(--lijn);font-size:15px}
+.woorden li:last-child{border-bottom:0}
+.woorden b{font-weight:700}
+.woorden span{color:var(--tekst);margin-left:auto;text-align:right}
+.woorden .luister{width:30px;height:30px}
+.scores{display:grid;gap:12px}
+.score{display:grid;grid-template-columns:118px auto 1fr;align-items:center;gap:12px;font-size:15px}
+.stippen{display:flex;gap:5px}
+.stippen i{width:14px;height:14px;border-radius:50%;background:var(--lijn)}
+.stippen i.aan{background:var(--paars)}
+.score span{color:var(--zacht);font-size:13.5px}
+.score-noot{font-size:13px;color:var(--zacht);margin-top:10px}
+.stapkaart p{font-size:16.5px;font-weight:600}
+.stapkaart .knoppen{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.gesprekterug .regel{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;padding:6px 0;font-size:15px}
+.gesprekterug .regel b{font-size:13px;color:var(--zacht);padding-top:2px}
+.gesprekterug .regel.leerling b{color:var(--paars-d)}
+.laden{display:flex;align-items:center;gap:12px;color:var(--tekst);font-size:15.5px;margin-top:22px}
+.laden i{width:8px;height:8px;border-radius:50%;background:var(--paars);animation:stip 1.2s infinite}
+.laden i:nth-child(2){animation-delay:.15s}.laden i:nth-child(3){animation-delay:.3s}
+.fb-onder{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+
+/* docent */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(29,21,48,.42);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto}
+.vel{background:#fff;border-radius:20px;max-width:760px;width:100%;padding:28px 30px 30px;box-shadow:0 24px 60px rgba(0,0,0,.25);position:relative}
+.vel h2{font-size:26px;font-weight:800;margin-bottom:6px}
+.vel h3{font-size:15px;font-weight:800;margin:22px 0 6px}
+.vel p,.vel li{font-size:15px;color:var(--tekst)}
+.vel ul{padding-left:20px;margin:6px 0 0;display:grid;gap:6px}
+.vel .sluit{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;border:1px solid var(--lijn);background:#fff;font-size:20px;line-height:1;color:var(--tekst)}
+.vel .klein{font-size:13px;color:var(--zacht);margin-top:22px}
+
+#toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14.5px;max-width:min(560px,calc(100% - 32px));opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:60;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1000px){
+  .straat{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:860px){
+  .kop{padding:10px 16px;height:56px;gap:10px}
+  .logo img{height:28px}
+  .kop-titel{padding-left:10px}
+  .kop-titel span{display:none}
+  .kop-knop{padding:7px 12px;font-size:13px}
+  .straat-wrap{padding:24px 16px 40px}
+  .straat{gap:12px;margin-top:22px}
+  .w-tekst{padding:12px 12px 14px}
+  .w-tekst b{font-size:15.5px}
+  .w-tekst span{font-size:13.5px}
+  .stappen{gap:14px;flex-direction:column}
+  .br{grid-template-columns:1fr;padding:16px 16px 40px;gap:8px}
+  .br-beeld{position:static;display:flex;gap:14px;align-items:center}
+  .br-beeld .gevel{width:120px;flex:none;border-radius:12px}
+  .br-wie{margin-top:0}
+  .info-lijst{grid-template-columns:1fr}
+  #sGesprek{height:auto;min-height:calc(100dvh - 56px)}
+  .g-boven{padding:8px 16px}
+  .g-raster{grid-template-columns:1fr;padding:12px 16px;gap:12px}
+  .portret{flex:none;height:min(38vh,320px)}
+  .g-zij{overflow:visible}
+  .g-boven .plek span,.breed-alleen{display:none}
+  .g-boven .plek{flex:1}
+  .g-boven .plek b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .g-boven .tekstknop,.pil{white-space:nowrap}
+  .g-onder{position:sticky;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));gap:8px;z-index:10;flex-wrap:nowrap;align-items:flex-start}
+  .g-onder .midden{flex:1;width:auto}
+  .mic{padding:14px 16px;font-size:16px;width:100%;justify-content:center}
+  .zijknop{padding:0;width:52px;height:52px;justify-content:center;border-radius:14px;flex:none}
+  .zijknop .lbl{display:none}
+  .zijknop svg{width:22px;height:22px}
+  .typ{width:100%}
+  .fb{padding:22px 16px 48px}
+  .fb-kop .mini{width:60px;height:60px}
+  .fb-raster{grid-template-columns:1fr}
+  .verb{grid-template-columns:1fr}
+  .score{grid-template-columns:104px auto 1fr}
+  .gesprekterug .regel{grid-template-columns:1fr;gap:0}
+  .vel{padding:24px 20px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-scherm="sStraat">
+<header class="kop">
+  <a class="logo" href="./" aria-label="AI voor Docenten, naar het begin"><img src="assets/logo-avd.png" alt="AI voor Docenten"></a>
+  <div class="kop-titel"><b>Sprich mal!</b><span>Duits spreken in de winkelstraat · 3 havo</span></div>
+  <button class="kop-knop" id="bDocent">Voor de docent</button>
+</header>
+
+<main>
+  <!-- de straat -->
+  <section class="scherm" id="sStraat">
+    <div class="straat-wrap">
+      <p class="eyebrow">Die Marktstraße</p>
+      <h1>Waar ga je naar binnen?</h1>
+      <p class="lead">Kies een winkel. Je praat Duits met de verkoper, met je eigen stem. Daarna krijg je feedback, zodat je het de volgende keer nog beter doet.</p>
+      <div class="straat" id="straat"></div>
+      <p class="status" id="liveStatus" hidden></p>
+      <div class="stappen">
+        <div class="stap"><i>1</i><div><b>Kies een winkel</b>Lees je opdrachten en de handige zinnen.</div></div>
+        <div class="stap"><i>2</i><div><b>Praat Duits</b>Houd de knop ingedrukt, praat en laat los.</div></div>
+        <div class="stap"><i>3</i><div><b>Leer van je feedback</b>Kijk wat goed ging en probeer het nog eens.</div></div>
+      </div>
+      <p class="voet">Gemaakt door <a href="https://aivoordocenten.nl" target="_blank" rel="noopener">AI voor Docenten</a>. De verkopers zijn een AI, geen echte mensen.</p>
+    </div>
+  </section>
+
+  <!-- de briefing -->
+  <section class="scherm" id="sBriefing" hidden>
+    <div class="br">
+      <div>
+        <button class="tekstknop" id="brTerug">← Terug naar de straat</button>
+        <div class="br-beeld">
+          <div id="brGevel"></div>
+          <div class="br-wie"><div class="mini" id="brMini"></div><div><b id="brPersoon"></b><span id="brRol"></span></div></div>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow" id="brStad"></p>
+        <h1 id="brNaam"></h1>
+        <div class="blok focusblok" id="brFocus" hidden>
+          <h3>Jouw focus deze keer</h3>
+          <p id="brFocusTekst"></p>
+          <button class="tekstknop" id="brFocusWeg">Zonder focus oefenen</button>
+        </div>
+        <div class="blok"><h3>De situatie</h3><p class="situatie" id="brSituatie"></p></div>
+        <div class="blok"><h3>Je opdrachten</h3><ol class="taken" id="brTaken"></ol></div>
+        <div class="blok"><h3 id="brInfoTitel"></h3><div class="info-lijst" id="brInfo"></div><p class="noot" id="brNoot"></p></div>
+        <details class="blok" id="brZinnenBlok" open><summary>Handige zinnen</summary><ul class="zinnen" id="brZinnen"></ul></details>
+        <div class="br-start">
+          <button class="cta" id="brStart">Ga naar binnen</button>
+          <div class="tempo">Spreektempo
+            <div class="seg" role="group" aria-label="Spreektempo"><button data-tempo="normaal">Normaal</button><button data-tempo="langzaam">Langzaam</button></div>
+          </div>
+        </div>
+        <p class="micnoot">Je browser vraagt straks of de app je microfoon mag gebruiken. Kies Toestaan. Lukt praten niet, dan kun je ook typen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- het gesprek -->
+  <section class="scherm" id="sGesprek" hidden>
+    <div class="g-boven">
+      <button class="tekstknop" id="gTerug">← Straat</button>
+      <div class="plek"><b id="gWinkel"></b><span id="gWie"></span></div>
+      <div class="rechts"><button class="pil" id="gStop">Stoppen<span class="breed-alleen"> en feedback</span></button></div>
+    </div>
+    <div class="g-raster">
+      <div class="g-podium">
+        <div class="portret" id="portret"></div>
+        <div class="ondertitel" id="gOndertitel">
+          <div class="wie" id="gSpreker"></div>
+          <p class="de" id="gDe"></p>
+          <p class="nl" id="gNl" hidden></p>
+          <div class="o-knoppen">
+            <button class="pil" id="gNogeens" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Nog eens</button>
+            <button class="pil" id="gLangzaam" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M10 2h4"/></svg>Langzamer</button>
+            <button class="pil" id="gVertaal" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h9M8.5 3v2M6 5c.8 3.5 3 6 6 7.5M11 5c-.8 3.5-3 6-6 7.5"/><path d="M13 21l4-9 4 9M14.5 18h5"/></svg>Vertaling</button>
+          </div>
+        </div>
+      </div>
+      <aside class="g-zij">
+        <div class="kaart focuskaart" id="gFocus" hidden><h3>Jouw focus</h3><p id="gFocusTekst"></p></div>
+        <div class="kaart"><h3>Je opdrachten <em id="gTelling"></em></h3><ol class="taken" id="gTaken"></ol></div>
+        <div class="kaart hulpkaart" id="gHulp" hidden><h3>Dit kun je zeggen</h3><ul class="zinnen" id="gHulpLijst"></ul></div>
+        <div class="kaart jij" id="gJij" hidden><span>Jij zei</span><p id="gJijTekst"></p></div>
+        <details class="kaart blok" id="gInfoBlok"><summary id="gInfoTitel"></summary><div class="info-lijst" id="gInfo"></div><p class="noot" id="gNoot"></p></details>
+      </aside>
+    </div>
+    <div class="g-onder" id="gBediening">
+      <button class="zijknop" id="gHulpKnop" aria-pressed="false" aria-label="Hulp: zinnen die je nu kunt zeggen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg><span class="lbl">Hulp</span></button>
+      <div class="midden">
+        <button class="mic" id="gMic" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span id="gMicTekst">Even luisteren…</span></button>
+        <p class="caption" id="gCaption"></p>
+        <form class="typ" id="gTyp" hidden><input id="gInput" placeholder="Typ in het Duits…" autocomplete="off" lang="de"><button>Stuur</button></form>
+      </div>
+      <button class="zijknop" id="gTypKnop" aria-pressed="false" aria-label="Typen in plaats van praten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg><span class="lbl">Typen</span></button>
+    </div>
+    <div class="g-onder" id="gEinde" hidden>
+      <div class="einde"><p id="gEindeTekst">Het gesprek is klaar.</p><button class="cta" id="gNaarFb">Bekijk je feedback</button></div>
+    </div>
+  </section>
+
+  <!-- de feedback -->
+  <section class="scherm" id="sFeedback" hidden>
+    <div class="fb">
+      <div class="fb-kop">
+        <div class="mini" id="fbMini"></div>
+        <div>
+          <p class="eyebrow" id="fbWinkel"></p>
+          <h1 id="fbTitel"></h1>
+          <p class="samen" id="fbSamen"></p>
+        </div>
+      </div>
+      <div class="laden" id="fbLaden" hidden><i></i><i></i><i></i><span>Je feedback wordt gemaakt. De AI leest je gesprek terug…</span></div>
+      <div id="fbInhoud" hidden>
+        <div class="fb-raster">
+          <div class="kaart goedkaart"><h3>Dit ging goed</h3><ul class="lijst" id="fbGoed"></ul></div>
+          <div class="kaart"><h3>Je opdrachten <em id="fbTelling"></em></h3><ol class="taken" id="fbTaken"></ol></div>
+          <div class="kaart beterkaart breed"><h3>Zo zeg je het nog beter</h3><div id="fbBeter"></div></div>
+          <div class="kaart"><h3>Woorden om te onthouden</h3><ul class="woorden" id="fbWoorden"></ul></div>
+          <div class="kaart"><h3>Zo sprak je</h3><div class="scores" id="fbScores"></div><p class="score-noot" id="fbScoreNoot"></p></div>
+          <div class="kaart stapkaart breed">
+            <h3>Jouw volgende stap</h3>
+            <p id="fbStap"></p>
+            <p class="noot" id="fbFocus" hidden></p>
+            <div class="knoppen"><button class="cta" id="fbOpnieuw">Probeer het nog eens</button><button class="cta zacht" id="fbStraat">Andere winkel</button></div>
+          </div>
+          <details class="kaart blok breed gesprekterug"><summary>Lees het gesprek terug</summary><div id="fbGesprek"></div></details>
+        </div>
+      </div>
+      <div class="fb-onder" id="fbFout" hidden><button class="cta" id="fbNogmaals">Probeer de feedback opnieuw</button><button class="cta zacht" id="fbFoutStraat">Terug naar de straat</button></div>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="docent" hidden>
+  <div class="vel" role="dialog" aria-modal="true" aria-labelledby="dTitel">
+    <button class="sluit" id="dSluit" aria-label="Sluiten">×</button>
+    <p class="eyebrow">Voor de docent</p>
+    <h2 id="dTitel">Zo werkt Sprich mal!</h2>
+    <p>Een spreekoefening Duits voor 3 havo, op niveau A2. De leerling stapt in een Duitse winkelstraat vier situaties binnen: de bakker, een kledingwinkel, een café en het loket op het station. Een AI speelt de verkoper en praat terug met een Duitse stem. Na afloop krijgt de leerling feedback in het Nederlands.</p>
+    <h3>Wat de verkoper doet</h3>
+    <ul>
+      <li>Spreekt eenvoudig Duits in korte zinnen en stelt steeds één vraag, zodat de leerling weet wat hij kan zeggen.</li>
+      <li>Verbetert niet als een leraar, maar herhaalt de goede vorm (“Vier Brötchen, gerne.”).</li>
+      <li>Blijft in het Duits, ook als de leerling Nederlands praat, en helpt dan met een keuzevraag.</li>
+      <li>Zorgt in elke situatie voor één klein probleem, zoals een brood dat op is of een trein met vertraging.</li>
+    </ul>
+    <h3>Steun voor de leerling</h3>
+    <ul>
+      <li>Handige zinnen vooraf, een knop Hulp met twee passende zinnen, een vertaling en een langzamer tempo.</li>
+      <li>De opdrachten worden afgevinkt zodra de leerling ze in het Duits heeft gedaan.</li>
+      <li>Feedback achteraf: wat goed ging, twee of drie verbeterde zinnen om te beluisteren, nuttige woorden en één volgende stap. Met “Probeer het nog eens” neemt de leerling die stap mee als focus.</li>
+    </ul>
+    <h3>In je les</h3>
+    <ul>
+      <li>Oefen de handige zinnen eerst klassikaal hardop. Dan durven leerlingen meer.</li>
+      <li>Werk in tweetallen: één praat, de ander kijkt mee naar de opdrachten en geeft daarna één tip.</li>
+      <li>Laat leerlingen hun volgende stap opschrijven en meteen een tweede poging doen. Vergelijk de twee.</li>
+      <li>Bespreek klassikaal een fout die vaak voorkomt, zoals “Ich will” tegenover “Ich hätte gern”.</li>
+    </ul>
+    <h3>Eerlijk over AI</h3>
+    <p>De feedback is een hulpmiddel, geen cijfer. De AI kan zich vergissen, vooral bij uitspraak: dat oordeel is een indicatie. Jouw eigen oordeel als docent blijft leidend.</p>
+    <h3>Privacy</h3>
+    <p>De opname en de tekst gaan via OpenRouter naar een taalmodel van Google (Gemini). De stem wordt gemaakt door Microsoft (MAI-Voice). De app bewaart geen gesprekken op een server; de voortgang staat alleen in de browser van de leerling. Laat leerlingen geen namen of persoonlijke gegevens noemen, en check of het gebruik van stemopnames past binnen de privacyafspraken van je school.</p>
+    <p class="klein">Gemaakt door AI voor Docenten · aivoordocenten.nl</p>
+  </div>
+</div>
+
+<audio id="stemAudio" preload="auto"></audio>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="data.js"></script>
+<script src="tekeningen.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
