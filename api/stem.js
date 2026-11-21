@@ -59,10 +59,12 @@ export default async function handler(req, res) {
     if (!r.ok && r.status === 400) { delete payload.speed; r = await tts(key, payload); }
     if (!r.ok) {
       const fout = await r.text().catch(() => '');
-      return res.status(502).json({ fout: `Stem gaf status ${r.status}`, details: fout.slice(0, 300) });
+      console.error(`[sprich-mal] stem ${body.wie}: status ${r.status}`, fout.slice(0, 300));
+      return res.status(502).json({ fout: 'De stem lukte niet.' });
     }
     const buf = Buffer.from(await r.arrayBuffer());
     res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('X-Stem-Tempo', payload.speed ? String(payload.speed) : 'standaard');
     return res.status(200).send(buf);
   } catch (e) {
     return res.status(502).json({ fout: e.message || 'Stem lukt niet' });
